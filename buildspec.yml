@@ -1,0 +1,8 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+      - docker build -f Dockerfile -t git.systementor.se/philip.nilsson/yacloudgo .
+      - docker login -u philip.nilsson -p yacloud1 https://git.systementor.se
+      - docker push git.systementor.se/philip.nilsson/yacloudgo

@@ -1,0 +1,39 @@
+{{ template "head" . }}
+
+<section style="max-width:500px" class="container-fluid">
+
+
+    <form method="post" role="form">
+
+		{{ if .Error }}
+		<p class="error">The email address or password is not valid.</p>
+	{{ end }}
+
+        <div >
+			<label for="email">Email:</label>
+			<input type="email" name="Email" value="{{ .Email }}" autofocus>
+		</div>
+                        
+                        
+        <div>
+			<label for="password">Password:</label>
+			<input type="password" name="password">
+		</div>
+
+
+                        
+
+        <hr />
+
+
+        <button type="submit">Login</button>
+    </form>
+
+</section>
+
+
+
+	
+
+
+{{ template "footer" . }}

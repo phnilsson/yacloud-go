@@ -1,0 +1,17 @@
+# Database credentials
+database:
+  # antingen denna
+  file: "database/sqlite" 
+  # eller alla dessa (om file är blankt)
+  sql-user: ""            #
+  sql-pass: ""
+  sql-server: "127.0.0.1"
+  sql-database: "SupportSystem"
+  sql-port: 3306
+
+redis:
+  server: "localhost:6379"
+
+
+
+

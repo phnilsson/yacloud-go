@@ -1,0 +1,15 @@
+# Database credentials
+database:
+  # antingen denna
+  file: "" 
+  # eller alla dessa (om file är blankt)
+  sql-user: "root"            #
+  sql-pass: "Hejsan123"
+  sql-server: "mysql"
+  sql-database: "salary"
+  sql-port: 3306
+
+redis:
+  server: "myredis:6379"
+
+
