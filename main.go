@@ -6,7 +6,6 @@ import (
 	"net/url"
 	"os"
 
-	"math/rand"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -20,7 +19,6 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-contrib/cors"
-
 )
 
 type PageView struct {
@@ -38,18 +36,10 @@ type LoginView struct {
 }
 
 type Credential struct {
-	Email string
+	Email    string
 	Password string
 }
 
-func (v *LoginView) Validate() bool {
-	if len(v.Email) < 3 {
-		return false
-	}
-	return true
-}
-
-var theRandom *rand.Rand
 var userkey = "SESSION_KEY_USERID"
 var jwtKey = []byte("SECRET_KEY")
 
@@ -103,31 +93,23 @@ func new_user(c *gin.Context) {
 }
 
 func newUserPost(c *gin.Context) {
-	var viewModel LoginView
-	c.ShouldBind(&viewModel)
-	if viewModel.Validate() {
-		username := c.PostForm("Email")
-		password := c.PostForm("password")
 
-		passwordHash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	// username := c.PostForm("Email")
+	// password := c.PostForm("password")
+	var cred Credential
+	c.ShouldBindJSON(&cred)
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(cred.Password), bcrypt.DefaultCost)
 
-		if err != nil {
-			c.JSON(500, gin.H{"error": "Unable to hash password"})
-			return
-		}
-
-		user := data.User{
-			Email: username,
-			Password: string(passwordHash),
-		}
-
-		data.DB.Create(&user)
-		redirectUrl := c.DefaultQuery("redirect_uri", "/")
-		c.Redirect(302, redirectUrl)
+	if err != nil {
+		c.JSON(500, gin.H{"error": "Unable to hash password"})
 		return
 	}
-	c.Status(200)
-	c.HTML(http.StatusOK, "new_user.html", &viewModel)
+	user := data.User{
+		Email:    cred.Email,
+		Password: string(passwordHash),
+	}
+	data.DB.Create(&user)
+	c.JSON(http.StatusOK, "Logged in")
 }
 
 func login(c *gin.Context) {
@@ -145,7 +127,6 @@ func loginPost(c *gin.Context) {
 	fmt.Println("email:")
 	fmt.Println(cred.Email)
 	fmt.Println(cred)
-
 
 	var user data.User
 	data.DB.Where("Email = ?", cred.Email).First(&user)
@@ -168,7 +149,6 @@ func loginPost(c *gin.Context) {
 var config Config
 
 func main() {
-	theRandom = rand.New(rand.NewSource(time.Now().UnixNano()))
 	readConfig(&config)
 
 	data.InitDatabase(config.Database.File,
@@ -181,11 +161,11 @@ func main() {
 	router := gin.Default()
 	corsConfig := cors.DefaultConfig()
 	corsConfig.AllowAllOrigins = true
-    corsConfig.AllowCredentials = true
-    corsConfig.AllowMethods = []string{"GET", "POST"}
-    corsConfig.AllowHeaders = []string{"Origin", "Content-Type"}
+	corsConfig.AllowCredentials = true
+	corsConfig.AllowMethods = []string{"GET", "POST"}
+	corsConfig.AllowHeaders = []string{"Origin", "Content-Type"}
 
-    router.Use(cors.New(corsConfig))
+	router.Use(cors.New(corsConfig))
 	//2
 	var secret = []byte("secret")
 	// store, _ := redis.NewStore(10, "tcp", config.Redis.Server, "", secret)
