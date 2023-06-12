@@ -11,7 +11,6 @@ import (
 
 	//1
 	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/memstore"
 	_ "github.com/gin-contrib/sessions/redis"
 	"golang.org/x/crypto/bcrypt"
 
@@ -120,11 +119,6 @@ func main() {
 	corsConfig.AllowHeaders = []string{"Origin", "Content-Type"}
 
 	router.Use(cors.New(corsConfig))
-	var secret = []byte("secret")
-	store := memstore.NewStore([]byte(secret))
-	router.Use(sessions.Sessions("mysession2", store))
-
-	router.LoadHTMLGlob("templates/**")
 	router.GET("/login", login)
 	router.POST("/login", loginPost)
 	router.GET("/logout", logout)
